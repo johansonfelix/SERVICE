@@ -16,7 +16,7 @@ public class AlbumRest {
     //change return type
     @POST
     @Consumes("application/xml")
-    public void createBook(Album album) {
+    public void createAlbum(Album album) {
 
         //check if album ISRC already exists
         //if ISRC exists then return error - album ISRC already exists
