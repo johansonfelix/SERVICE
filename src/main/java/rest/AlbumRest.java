@@ -6,12 +6,12 @@ import pojo.Album;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
+
 
 @Path("album")
 public class AlbumRest {
-    private static Albums albums;
 
+    private static Albums albums = new Albums();
 
     //change return type
     @POST
@@ -26,26 +26,20 @@ public class AlbumRest {
         }
         //else add album and return success message
         albums.addAlbum(album);
-        return "Successfully added album: " + album.toString();
+        return "Successfully added album: [" + album.toString()+"]";
     }
+
     @PUT
     @Path("update/title/{ISRC}/{newValue}")
     @Consumes("text/plain")
-    public Response updateTitle(@PathParam("ISRC") String ISRC, @PathParam("newValue") String newTitle){
-        if(!albums.albumExists(ISRC)){
-            return Response
-                    .status(Response.Status.CREATED)
-                    .entity(new String("Album created"))
-                    .type(MediaType.TEXT_PLAIN_TYPE)
-                    .build();     }
-        albums.getAlbum(ISRC).setTitle(newTitle);
-//        return "Successfully updated album title.";
-        return Response
-                .status(Response.Status.CREATED)
-                .entity(new String("Album created"))
-                .type(MediaType.TEXT_PLAIN_TYPE)
-                .build();
+    public String updateTitle(@PathParam("ISRC") String ISRC, @PathParam("newValue") String newTitle) {
+        if (!albums.albumExists(ISRC))
+            return "Album title couldn't be updated. Album does not exist.";
+
+            return "Successfully updated album title.";
+
     }
+
 //    @PUT
 //    @Consumes("application/xml")
 //    public String updateAlbum(String ISRC, String attribute, String... values){
@@ -73,18 +67,21 @@ public class AlbumRest {
 //        return "Successfully updated album.";
 //    }
 
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String getAlbum(String ISRC){
+    @Path("{isrc}")
+    public String getAlbum(@PathParam("isrc") String ISRC){
         if(albums.getAlbum(ISRC) == null){
             return "Album not found";
         } else return albums.getAlbum(ISRC).toString();
     }
-    @GET
+
+    /*@GET
     @Produces(MediaType.TEXT_PLAIN)
     public String listAlbums(){
         return albums.toString();
-    }
+    }*/
 
 
 
