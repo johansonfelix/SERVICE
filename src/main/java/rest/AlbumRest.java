@@ -24,9 +24,10 @@ public class AlbumRest {
         if(albums.getAlbum(album.getISRC()) != null){
             return "An album with that ISRC already exists. Please try entering a different one.";
         }
-        //else add album and return success message
+//        //else add album and return success message
         albums.addAlbum(album);
         return "Successfully added album: [" + album.toString()+"]";
+
     }
 
     @PUT
