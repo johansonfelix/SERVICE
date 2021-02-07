@@ -12,7 +12,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="CORE" target="1.7" />
+      <module name="CORE" target="1.5" />
       <module name="IMPLEMENTATION" target="1.7" />
       <module name="SERVICE" target="1.7" />
     </bytecodeTargetLevel>

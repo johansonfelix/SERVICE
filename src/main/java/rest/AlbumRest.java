@@ -5,7 +5,7 @@ import pojo.Album;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 
 
 @Path("album")
@@ -13,9 +13,10 @@ public class AlbumRest {
 
     private static Albums albums = new Albums();
 
+
     //change return type
     @POST
-    @Consumes("application/xml")
+    @Consumes(MediaType.APPLICATION_XML)
     public String addAlbum(Album album) {
 
         //check if album ISRC already exists
@@ -78,11 +79,24 @@ public class AlbumRest {
         } else return albums.getAlbum(ISRC).toString();
     }
 
-    /*@GET
+    @GET
     @Produces(MediaType.TEXT_PLAIN)
+    @Path("listalbums")
     public String listAlbums(){
         return albums.toString();
-    }*/
+    }
+
+    @DELETE
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("delete/{ISRC}")
+    public String deleteAlbum(@PathParam("ISRC") String ISRC){
+        if(albums.getAlbum(ISRC) == null){
+            return "Album doesn't exist";
+        } else {
+            albums.deleteAlbum(ISRC);
+            return "Album deleted";
+        }
+    }
 
 
 
