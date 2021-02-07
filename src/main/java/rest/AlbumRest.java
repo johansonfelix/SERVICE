@@ -28,5 +28,7 @@ public class AlbumRest {
 
     }
 
+    public void test(){}
+
 
 }
