@@ -5,7 +5,7 @@ import pojo.Album;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-
+import java.awt.print.Book;
 
 
 @Path("album")
@@ -32,42 +32,55 @@ public class AlbumRest {
     }
 
     @PUT
-    @Path("update/title/{ISRC}/{newValue}")
+    @Path("update/{attribute}/{ISRC}/{newValue}")
     @Consumes("text/plain")
-    public String updateTitle(@PathParam("ISRC") String ISRC, @PathParam("newValue") String newTitle) {
-        if (!albums.albumExists(ISRC))
-            return "Album title couldn't be updated. Album does not exist.";
+    public String updateTitle(@PathParam("attribute") String attribute, @PathParam("ISRC") String ISRC, @PathParam("newValue") String newValue) {
 
-            return "Successfully updated album title.";
+        if (!albums.albumExists(ISRC))
+            return "Album "+attribute+" couldn't be updated. Album does not exist.";
+
+
+        switch (attribute){
+            case "title":{
+                albums.getAlbum(ISRC).setTitle(newValue);
+                break;
+            }
+
+            case "description":{
+                albums.getAlbum(ISRC).setDescription(newValue);
+                break;
+            }
+
+            case "releaseyear":{
+                albums.getAlbum(ISRC).setReleaseYear(newValue);
+                break;
+            }
+
+            case "artist":{
+                albums.getAlbum(ISRC).setArtist(newValue);
+            }
+        }
+        return "Album "+attribute+" updated.";
+    }
+
+
+    @PUT
+    @Path("update/all")
+    @Consumes("application/xml")
+    public String updateAlbum(Album album) {
+        if (!albums.albumExists(album.getISRC()))
+            return "Album couldn't be updated. Album does not exist.";
+
+        else{
+            Album oldAlbum = albums.getAlbum(album.getISRC());
+            oldAlbum = album;
+        }
+
+        return "Album updated";
 
     }
 
-//    @PUT
-//    @Consumes("application/xml")
-//    public String updateAlbum(String ISRC, String attribute, String... values){
-//        if(albums.albumExists(ISRC)){
-//            return "Album does not exist.";
-//        }
-//        Album album = albums.getAlbum(ISRC);
-//        if(attribute.equals("all")){
-//            album.setISRC(values[0]);
-//            album.setTitle(values[1]);
-//            album.setDescription(values[2]);
-//            album.setArtist(values[3]);
-//            album.setReleaseYear(values[4]);
-//        }
-//        switch(attribute){
-//            case "title":
-//                album.setTitle(values[0]);
-//                break;
-//            case "description":
-//                album.setDescription(values[0]);
-//                break;
-//            case ""
-//
-//        }
-//        return "Successfully updated album.";
-//    }
+
 
 
     @GET
