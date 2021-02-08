@@ -1,6 +1,7 @@
 package rest;
 
 import impl.Albums;
+import org.json.JSONObject;
 import pojo.Album;
 
 import javax.ws.rs.*;
@@ -16,7 +17,8 @@ public class AlbumRest {
 
     //change return type
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Path("add")
+    @Consumes(MediaType.TEXT_XML)
     public String addAlbum(Album album) {
 
         //check if album ISRC already exists
@@ -32,13 +34,14 @@ public class AlbumRest {
     }
 
     @PUT
-    @Path("update/{attribute}/{ISRC}/{newValue}")
-    @Consumes("text/plain")
-    public String updateTitle(@PathParam("attribute") String attribute, @PathParam("ISRC") String ISRC, @PathParam("newValue") String newValue) {
+    @Path("update-single-attribute/{ISRC}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateAttribute(@PathParam("ISRC") String ISRC, JSONObject json) {
+        String attribute = json.getString("attribute");
+        String newValue = json.getString("newValue");
 
         if (!albums.albumExists(ISRC))
             return "Album "+attribute+" couldn't be updated. Album does not exist.";
-
 
         switch (attribute){
             case "title":{
@@ -51,7 +54,7 @@ public class AlbumRest {
                 break;
             }
 
-            case "releaseyear":{
+            case "releaseYear":{
                 albums.getAlbum(ISRC).setReleaseYear(newValue);
                 break;
             }
@@ -65,19 +68,25 @@ public class AlbumRest {
 
 
     @PUT
-    @Path("update/all")
-    @Consumes("application/xml")
-    public String updateAlbum(Album album) {
-        if (!albums.albumExists(album.getISRC()))
+    @Path("update-all-attributes/{ISRC}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateAllAttributes(@PathParam("ISRC") String ISRC, JSONObject jsonObject) {
+        String newTitle = jsonObject.getString("newTitle");
+        String newDescription = jsonObject.getString("newDescription");
+        String newReleaseYear = jsonObject.getString("newReleaseYear");
+        String newArtistNickname = jsonObject.getString("newArtistNickname");
+        if (!albums.albumExists(ISRC)) {
             return "Album couldn't be updated. Album does not exist.";
-
-        else{
-            Album oldAlbum = albums.getAlbum(album.getISRC());
-            oldAlbum = album;
         }
+        else{
+            Album albumToUpdate = albums.getAlbum(ISRC);
+            albumToUpdate.setTitle(newTitle);
+            albumToUpdate.setDescription(newDescription);
+            albumToUpdate.setReleaseYear(newReleaseYear);
+            albumToUpdate.setArtist(newArtistNickname);
+            return "Album updated";
 
-        return "Album updated";
-
+        }
     }
 
 
@@ -85,7 +94,7 @@ public class AlbumRest {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("{isrc}")
+    @Path("get-details/{isrc}")
     public String getAlbum(@PathParam("isrc") String ISRC){
         if(albums.getAlbum(ISRC) == null){
             return "Album not found";
@@ -94,7 +103,7 @@ public class AlbumRest {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("listalbums")
+    @Path("get-details-all")
     public String listAlbums(){
         return albums.toString();
     }
@@ -110,11 +119,4 @@ public class AlbumRest {
             return "Album deleted";
         }
     }
-
-
-
-
-
-
-
 }
