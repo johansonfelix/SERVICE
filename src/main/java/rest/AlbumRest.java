@@ -36,41 +36,48 @@ public class AlbumRest {
     @PUT
     @Path("update-single-attribute/{ISRC}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateAttribute(@PathParam("ISRC") String ISRC, JSONObject json) {
+    public String updateAttribute(@PathParam("ISRC") String ISRC, String jsonString) {
+        JSONObject json = new JSONObject(jsonString);
         String attribute = json.getString("attribute");
         String newValue = json.getString("newValue");
-
+        System.out.println("ISRC " + ISRC);
+        System.out.println("Attribute " + attribute);
+        System.out.println("New value " + newValue);
+        System.out.println("Reached");
         if (!albums.albumExists(ISRC))
             return "Album "+attribute+" couldn't be updated. Album does not exist.";
+        else {
+            switch (attribute) {
+                case "title": {
+                    albums.getAlbum(ISRC).setTitle(newValue);
+                    break;
+                }
 
-        switch (attribute){
-            case "title":{
-                albums.getAlbum(ISRC).setTitle(newValue);
-                break;
-            }
+                case "description": {
+                    albums.getAlbum(ISRC).setDescription(newValue);
+                    break;
+                }
 
-            case "description":{
-                albums.getAlbum(ISRC).setDescription(newValue);
-                break;
-            }
+                case "releaseYear": {
+                    albums.getAlbum(ISRC).setReleaseYear(newValue);
+                    break;
+                }
 
-            case "releaseYear":{
-                albums.getAlbum(ISRC).setReleaseYear(newValue);
-                break;
+                case "artistNickname": {
+                    albums.getAlbum(ISRC).setArtist(newValue);
+                }
             }
-
-            case "artist":{
-                albums.getAlbum(ISRC).setArtist(newValue);
-            }
+            return "Album "+attribute+" updated.";
         }
-        return "Album "+attribute+" updated.";
     }
 
 
     @PUT
     @Path("update-all-attributes/{ISRC}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateAllAttributes(@PathParam("ISRC") String ISRC, JSONObject jsonObject) {
+    public String updateAllAttributes(@PathParam("ISRC") String ISRC, String jsonString) {
+        JSONObject jsonObject = new JSONObject(jsonString);
+
         String newTitle = jsonObject.getString("newTitle");
         String newDescription = jsonObject.getString("newDescription");
         String newReleaseYear = jsonObject.getString("newReleaseYear");
