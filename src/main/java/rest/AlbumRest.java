@@ -13,8 +13,6 @@ import javax.ws.rs.core.MediaType;
 public class AlbumRest {
 
     private static Albums albums = new Albums();
-
-
     //change return type
     @POST
     @Path("add")
@@ -30,9 +28,7 @@ public class AlbumRest {
 //        //else add album and return success message
         albums.addAlbum(album);
         return "Successfully added album: [" + album.toString()+"]";
-
     }
-
     @PUT
     @Path("update-single-attribute/{ISRC}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,14 +66,11 @@ public class AlbumRest {
             return "Album "+attribute+" updated.";
         }
     }
-
-
     @PUT
     @Path("update-all-attributes/{ISRC}")
     @Consumes(MediaType.APPLICATION_JSON)
     public String updateAllAttributes(@PathParam("ISRC") String ISRC, String jsonString) {
         JSONObject jsonObject = new JSONObject(jsonString);
-
         String newTitle = jsonObject.getString("newTitle");
         String newDescription = jsonObject.getString("newDescription");
         String newReleaseYear = jsonObject.getString("newReleaseYear");
@@ -92,13 +85,8 @@ public class AlbumRest {
             albumToUpdate.setReleaseYear(newReleaseYear);
             albumToUpdate.setArtist(newArtistNickname);
             return "Album updated";
-
         }
     }
-
-
-
-
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("get-details/{isrc}")
